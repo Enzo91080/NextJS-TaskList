@@ -1,7 +1,4 @@
-// app/task/[id]/page.js
-import Head from "next/head";
 import Link from "next/link";
-
 
 async function getTask(id) {
   const res = await fetch(`https://jsonplaceholder.typicode.com/todos/${id}`, {
@@ -11,16 +8,17 @@ async function getTask(id) {
   return task;
 }
 
-export const metadata = {
-  title: `Task Details - ${task.title}`,
-  description: `Détails de la tâche avec ID ${task.id}`,
-};
+export async function generateMetadata({ params }) {
+  const task = await getTask(params.id);
+  return {
+    title: `Détails de la tâche ${task.id}`,
+    description: task.title,
+  };
+}
 
 export default async function TaskPage({ params }) {
   const { id } = params;
   const task = await getTask(id);
-
-  
 
   return (
     <div className="max-w-2xl mx-auto p-4">
@@ -28,7 +26,9 @@ export default async function TaskPage({ params }) {
         <h1 className="text-2xl font-bold mb-4">Détails de la tâche</h1>
         {/* Lien pour voir les tâches de cet utilisateur */}
         <Link href={`/tasks/user/${task.userId}`}>
-          <span className="text-blue-600 hover:underline">Voir les tâches de cet utilisateur</span>
+          <span className="text-blue-600 hover:underline">
+            Voir les tâches de cet utilisateur
+          </span>
         </Link>
       </div>
 
